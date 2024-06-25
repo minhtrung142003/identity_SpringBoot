@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository // tạo cái bean userRepository
 public interface UserRepository extends JpaRepository<User, String> {
+    boolean existsByUsername(String username); // check username đã tồn tại chưa
 }
 

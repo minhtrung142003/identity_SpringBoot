@@ -4,6 +4,7 @@ import com.trungha.identity_service.dto.request.UserCreationRequest;
 import com.trungha.identity_service.dto.request.UserUpdateRequest;
 import com.trungha.identity_service.entity.User;
 import com.trungha.identity_service.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class UserController { // tương tác với các class service
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest request) {  //dùng để map data vào obj
+    User createUser(@RequestBody @Valid UserCreationRequest request) {  //dùng để map data vào obj
         return userService.createUser(request);
     }
     @GetMapping
