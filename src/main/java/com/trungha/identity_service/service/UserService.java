@@ -3,6 +3,8 @@ package com.trungha.identity_service.service;
 import com.trungha.identity_service.dto.request.UserCreationRequest;
 import com.trungha.identity_service.dto.request.UserUpdateRequest;
 import com.trungha.identity_service.entity.User;
+import com.trungha.identity_service.exception.AppException;
+import com.trungha.identity_service.exception.ErrorCode;
 import com.trungha.identity_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,13 @@ public class UserService {
     public User createUser(UserCreationRequest request) {
         User user = new User();
         if(userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("User đã tồn tại");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
+
+        UserCreationRequest request1 = UserCreationRequest.builder()
+                .username("")
+                .lastname("")
+                .build();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         user.setFirstname(request.getFirstname());

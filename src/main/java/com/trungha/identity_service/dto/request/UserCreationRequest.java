@@ -1,57 +1,23 @@
 package com.trungha.identity_service.dto.request;
 
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+@Data
+@Builder
+@NoArgsConstructor // dùng để override cái constructor bên service khi new 1 obj, tức là User user1 = new User
+@AllArgsConstructor
 public class UserCreationRequest {
-    @Size(min = 3, message = "Username must be at least 3 character.")
+    @Size(min = 3, message = "USERNAME_INVALID")
     private String username;
-    @Size(min = 8, message = "Password must be at least 8 character.")
+    @Size(min = 8, message = "PASSWORD_ERROR")
     private String password;
     private String firstname;
     private String lastname;
     private LocalDate dob;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
-
-
 }

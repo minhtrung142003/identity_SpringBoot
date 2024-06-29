@@ -1,5 +1,6 @@
 package com.trungha.identity_service.controller;
 
+import com.trungha.identity_service.dto.request.ApiResponse;
 import com.trungha.identity_service.dto.request.UserCreationRequest;
 import com.trungha.identity_service.dto.request.UserUpdateRequest;
 import com.trungha.identity_service.entity.User;
@@ -18,8 +19,10 @@ public class UserController { // tương tác với các class service
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreationRequest request) {  //dùng để map data vào obj
-        return userService.createUser(request);
+    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) {  //dùng để map data vào obj
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.createUser(request));
+        return apiResponse;
     }
     @GetMapping
     List<User> getUsers() {
