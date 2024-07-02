@@ -1,10 +1,8 @@
 package com.trungha.identity_service.dto.request;
 
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
@@ -12,12 +10,13 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor // dùng để override cái constructor bên service khi new 1 obj, tức là User user1 = new User
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
     @Size(min = 3, message = "USERNAME_INVALID")
-    private String username;
+    String username;
     @Size(min = 8, message = "PASSWORD_ERROR")
-    private String password;
-    private String firstname;
-    private String lastname;
-    private LocalDate dob;
+    String password;
+    String firstname;
+    String lastname;
+    LocalDate dob;
 }
