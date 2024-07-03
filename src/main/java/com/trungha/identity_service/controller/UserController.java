@@ -5,14 +5,12 @@ import com.trungha.identity_service.dto.request.UserCreationRequest;
 import com.trungha.identity_service.dto.request.UserUpdateRequest;
 import com.trungha.identity_service.dto.response.UserResponse;
 import com.trungha.identity_service.entity.User;
-import com.trungha.identity_service.mapper.UserMapper;
 import com.trungha.identity_service.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -46,7 +44,6 @@ public class UserController { // tương tác với các class service
     @DeleteMapping("/{userId}")
     String User(@PathVariable String userId) {
         userService.deleteUser(userId);
-        return "Delete has been successfull";
+        return "Delete has been successfully";
     }
-
 }

@@ -5,7 +5,8 @@ public enum ErrorCode {
     INVALID_KEY(1001, "INVALID MESSAGE KEY"), // ví dụ ghi sai code thì show lỗi
     USER_EXISTED(1002, "User existed"), // user đã tồn tại
     USERNAME_INVALID(1003, "Username must be at least 3 character."),
-    PASSWORD_ERROR(1004, "Password must be at least 8 character.")
+    PASSWORD_ERROR(1004, "Password must be at least 8 character."),
+    USER_NOT_EXISTED(1005, "User not existed"),
     ;
     private int code;
     private String message;
