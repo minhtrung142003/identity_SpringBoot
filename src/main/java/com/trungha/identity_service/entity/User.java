@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -23,5 +24,5 @@ public class User {
     String firstname;
     String lastname;
     LocalDate dob;
-
+    Set<String> roles; // set khac voi list la mỗi phần tử chỉ là duy nhất (unique)
 }

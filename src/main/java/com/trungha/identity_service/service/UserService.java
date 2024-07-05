@@ -4,6 +4,7 @@ import com.trungha.identity_service.dto.request.UserCreationRequest;
 import com.trungha.identity_service.dto.request.UserUpdateRequest;
 import com.trungha.identity_service.dto.response.UserResponse;
 import com.trungha.identity_service.entity.User;
+import com.trungha.identity_service.enums.Role;
 import com.trungha.identity_service.exception.AppException;
 import com.trungha.identity_service.exception.ErrorCode;
 import com.trungha.identity_service.mapper.UserMapper;
@@ -14,27 +15,35 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor // tu dong create constructor va inject dependency nay vao
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // make true tuc la ko khai bao se tu dong thanh private final
 public class UserService {
+
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     public User createUser(UserCreationRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(request); // dùng mapper để gọi ra all
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // set roles
+        HashSet<String> hashSet = new HashSet<>();
+        hashSet.add(Role.USER.name());
+        user.setRoles(hashSet);
+
         return userRepository.save(user);
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getUsers() {
+        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
     public UserResponse getUser(String id){

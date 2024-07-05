@@ -9,6 +9,7 @@ import com.trungha.identity_service.dto.request.AuthenticationRequest;
 import com.trungha.identity_service.dto.request.IntrospectRequest;
 import com.trungha.identity_service.dto.response.AuthenticationResponse;
 import com.trungha.identity_service.dto.response.IntrospectResponse;
+import com.trungha.identity_service.entity.User;
 import com.trungha.identity_service.exception.AppException;
 import com.trungha.identity_service.exception.ErrorCode;
 import com.trungha.identity_service.repository.UserRepository;
@@ -22,11 +23,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +56,7 @@ public class AuthenticationService {
                 .build();
     }
 
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -60,24 +65,24 @@ public class AuthenticationService {
         if(!authentication) {
             throw new AppException(ErrorCode.UNAUTHENTICATE);
         }
-        var token = generateToken(request.getUsername());
+        var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
                 .build();
     }
 
-    private String generateToken(String username) {
+    private String generateToken(User user ) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512); // header
         // dung claim de build payload
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("trungha.com")
                 .issueTime(new Date()) // time create
                 .expirationTime(new Date( // time end
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("CustomClaim", "Custom")
+                .claim("Scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -90,6 +95,14 @@ public class AuthenticationService {
             log.error("cannot create token", e);
             throw new RuntimeException(e);
         }
+    }
+
+    // them roles vao token
+    private String buildScope(User user) {
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(stringJoiner::add);
+        return stringJoiner.toString();
     }
 
 }
