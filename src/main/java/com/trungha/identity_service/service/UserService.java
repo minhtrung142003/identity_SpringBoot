@@ -12,6 +12,10 @@ import com.trungha.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor // tu dong create constructor va inject dependency nay vao
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true) // make true tuc la ko khai bao se tu dong thanh private final
@@ -42,13 +47,29 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // chi co admin get all user
+    @PreAuthorize("authentication.name == 'admin'")
     public List<UserResponse> getUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+        log.info("In method get all user");
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserResponse).toList();
     }
 
+    // user chi dc get thong tin cua user do
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String id){
+        log.info("In method get user id");
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found")));
+    }
+
+    // Cách lấy thông tin đăng nhập là ai
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(name).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {

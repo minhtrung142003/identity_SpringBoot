@@ -1,27 +1,29 @@
 package com.trungha.identity_service.exception;
 
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
+@Getter
 public enum ErrorCode {
-    USER_UNCATEGORIZED(9999, "Uncategorized error"), // tức là 1 lỗi nào đó xuất hiện
-    INVALID_KEY(1001, "INVALID MESSAGE KEY"), // ví dụ ghi sai code thì show lỗi
-    USER_EXISTED(1002, "User existed"), // user đã tồn tại
-    USERNAME_INVALID(1003, "Username must be at least 3 character."),
-    PASSWORD_ERROR(1004, "Password must be at least 8 character."),
-    USER_NOT_EXISTED(1005, "User not existed"),
-    UNAUTHENTICATE(1006, "Unauthenticated"),
+    USER_UNCATEGORIZED(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR), // tức là 1 lỗi nào đó ko xac dinh dc
+    INVALID_KEY(1001, "INVALID MESSAGE KEY",HttpStatus.BAD_REQUEST), // ví dụ ghi sai code thì show lỗi
+    USER_EXISTED(1002, "User existed",HttpStatus.BAD_REQUEST), // user đã tồn tại
+    USERNAME_INVALID(1003, "Username must be at least 3 character.",HttpStatus.BAD_REQUEST), // LOI 400
+    PASSWORD_ERROR(1004, "Password must be at least 8 character." ,HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1005, "User not existed", HttpStatus.NOT_FOUND), // ERROR NOT FOUND 404
+    UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED), // ERROR KO THE LOGIN DC 401
+    UNAUTHORIZED(1007, "You don't have permission", HttpStatus.FORBIDDEN), // ERROR 403 KHI USER KO CO QUYEN TRUY CAP
     ;
+
     private int code;
     private String message;
+    private HttpStatusCode httpStatusCode; // them vao de biet loi do la 400 or 401 or 404 or 500
 
-    ErrorCode(int code, String message) {
+    ErrorCode(int code, String message, HttpStatusCode httpStatusCode) {
         this.code = code;
         this.message = message;
+        this.httpStatusCode = httpStatusCode;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

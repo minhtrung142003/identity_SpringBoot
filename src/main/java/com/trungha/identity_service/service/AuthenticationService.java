@@ -63,7 +63,7 @@ public class AuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authentication = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if(!authentication) {
-            throw new AppException(ErrorCode.UNAUTHENTICATE);
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         var token = generateToken(user);
         return AuthenticationResponse.builder()
@@ -80,7 +80,7 @@ public class AuthenticationService {
                 .issuer("trungha.com")
                 .issueTime(new Date()) // time create
                 .expirationTime(new Date( // time end
-                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .claim("Scope", buildScope(user))
                 .build();

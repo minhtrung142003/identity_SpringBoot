@@ -48,6 +48,14 @@ public class UserController {
                 .build();
     }
 
+    // Cách lấy thông tin đăng nhập là ai
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
+    }
+
     @PutMapping("/{userId}")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return  ApiResponse.<UserResponse>builder()
