@@ -80,7 +80,7 @@ public class AuthenticationService {
                 .issuer("trungha.com")
                 .issueTime(new Date()) // time create
                 .expirationTime(new Date( // time end
-                        Instant.now().plus(1, ChronoUnit.SECONDS).toEpochMilli()
+                        Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
                 .claim("Scope", buildScope(user))
                 .build();
@@ -100,8 +100,8 @@ public class AuthenticationService {
     // them roles vao token
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if(!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(stringJoiner::add);
+       // if(!CollectionUtils.isEmpty(user.getRoles()))
+            //user.getRoles().forEach(stringJoiner::add);
         return stringJoiner.toString();
     }
 
