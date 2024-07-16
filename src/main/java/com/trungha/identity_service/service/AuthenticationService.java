@@ -82,7 +82,7 @@ public class AuthenticationService {
                 .expirationTime(new Date( // time end
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("Scope", buildScope(user))
+                .claim("scope", buildScope(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
@@ -100,8 +100,13 @@ public class AuthenticationService {
     // them roles vao token
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-       // if(!CollectionUtils.isEmpty(user.getRoles()))
-            //user.getRoles().forEach(stringJoiner::add);
+        if(!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(role -> {
+                stringJoiner.add("ROLE_" + role.getName()); // add name cua role vao token
+                if(!CollectionUtils.isEmpty(role.getPermissions())) // neu permission ko rỗng
+                 role.getPermissions()
+                         .forEach(permission -> stringJoiner.add(permission.getName())); // add permission vao role trong scope
+            });
         return stringJoiner.toString();
     }
 

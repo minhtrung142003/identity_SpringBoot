@@ -8,6 +8,7 @@ import com.trungha.identity_service.enums.Role;
 import com.trungha.identity_service.exception.AppException;
 import com.trungha.identity_service.exception.ErrorCode;
 import com.trungha.identity_service.mapper.UserMapper;
+import com.trungha.identity_service.repository.RoleRepository;
 import com.trungha.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-
+    RoleRepository roleRepository;
     public User createUser(UserCreationRequest request) {
         if(userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -47,9 +48,9 @@ public class UserService {
     }
 
     // chi co admin get all user
-    @PreAuthorize("authentication.name == 'admin'")
+    @PreAuthorize("hasAuthority('Approve-Post')")
     public List<UserResponse> getUsers() {
-        log.info("In method get all user");
+        log.info("In method get all user"); 
         return userRepository.findAll().stream()
                 .map(userMapper::toUserResponse).toList();
     }
@@ -75,6 +76,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new RuntimeException("User not found"));
         userMapper.updateUser(user, request); // dung mapper de goi all
+
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // update password
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles)); // map role vao user
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
