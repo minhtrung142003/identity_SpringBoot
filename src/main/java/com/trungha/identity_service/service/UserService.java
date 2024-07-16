@@ -48,7 +48,7 @@ public class UserService {
     }
 
     // chi co admin get all user
-    @PreAuthorize("hasAuthority('Approve-Post')")
+    @PreAuthorize("authentication.name == 'admin'")
     public List<UserResponse> getUsers() {
         log.info("In method get all user"); 
         return userRepository.findAll().stream()

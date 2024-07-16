@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.trungha.identity_service.dto.request.ApiResponse;
 import com.trungha.identity_service.dto.request.AuthenticationRequest;
 import com.trungha.identity_service.dto.request.IntrospectRequest;
+import com.trungha.identity_service.dto.request.LogoutRequest;
 import com.trungha.identity_service.dto.response.AuthenticationResponse;
 import com.trungha.identity_service.dto.response.IntrospectResponse;
 import com.trungha.identity_service.service.AuthenticationService;
@@ -40,4 +41,12 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+       throws ParseException, JOSEException {
+            authenticationService.logout(request);
+            return ApiResponse.<Void>builder()
+                    .build();
+        }
 }
