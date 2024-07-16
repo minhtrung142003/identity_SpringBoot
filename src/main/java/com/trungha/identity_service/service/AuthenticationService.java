@@ -8,6 +8,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.trungha.identity_service.dto.request.AuthenticationRequest;
 import com.trungha.identity_service.dto.request.IntrospectRequest;
 import com.trungha.identity_service.dto.request.LogoutRequest;
+import com.trungha.identity_service.dto.request.RefreshRequest;
 import com.trungha.identity_service.dto.response.AuthenticationResponse;
 import com.trungha.identity_service.dto.response.IntrospectResponse;
 import com.trungha.identity_service.entity.InvalidatedToken;
@@ -90,6 +91,30 @@ public class AuthenticationService {
                 .expiryTime(expiryTime)
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    // refresh token
+    public  AuthenticationResponse refreshToken(RefreshRequest request)
+            throws ParseException, JOSEException {
+        // ký token
+        var signedJWT = verifyToken(request.getToken());
+        // id token
+        String jti = signedJWT.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jti)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signedJWT.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        var token = generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {

@@ -21,7 +21,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     // ko can them authorization token
-    public final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/login", "/auth/introspect","/auth/logout" };
+    public final String[] PUBLIC_ENDPOINTS = {
+            "/users", "/auth/login", "/auth/introspect","/auth/logout", "/auth/refresh"
+    };
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
