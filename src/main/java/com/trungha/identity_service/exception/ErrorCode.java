@@ -14,6 +14,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "User not existed", HttpStatus.NOT_FOUND), // ERROR NOT FOUND 404
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED), // ERROR KO THE LOGIN DC 401
     UNAUTHORIZED(1007, "You don't have permission", HttpStatus.FORBIDDEN), // ERROR 403 KHI USER KO CO QUYEN TRUY CAP
+    INVALID_DOB(1008, "Invalid date of birth",HttpStatus.BAD_REQUEST), // STATUS ERROR 400
     ;
 
     private int code;
