@@ -23,6 +23,7 @@ public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) { // se dc khoi chay khi start len
+        log.info("init application...");
         return args -> {
             if(userRepository.findByUsername("admin").isEmpty()) {
                 var roles = new HashSet<String>();
